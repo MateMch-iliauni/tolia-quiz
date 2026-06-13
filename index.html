@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>თოლიას ქვიზი</title>
+<title>საიდუმლო ნაყინის ქვიზი</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#dff0fb 0%,#f0f8ff 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;}
@@ -78,115 +78,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .restart-btn{margin-top:0.75rem;padding:14px 32px;font-size:15px;font-weight:700;border-radius:14px;border:none;background:linear-gradient(90deg,#38bdf8,#7dd3fc);color:#fff;cursor:pointer;transition:opacity 0.18s;}
 .restart-btn:hover{opacity:0.88;}
 #confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
-/* Mobile optimization */
 @media (max-width: 768px) {
-
-  body {
-    padding: 0.75rem;
-    align-items: flex-start;
-  }
-
-  .wrap {
-    padding: 1.25rem;
-    border-radius: 18px;
-    margin-top: 1rem;
-  }
-
-  .header h1 {
-    font-size: 22px;
-  }
-
-  .header p {
-    font-size: 14px;
-  }
-
-  .q-text {
-    font-size: 17px;
-  }
-
-  .q-card {
-    padding: 1.25rem;
-  }
-
-  .opt,
-  .tf-btn,
-  .chk-btn,
-  .restart-btn,
-  .nxt-btn {
-    min-height: 52px;
-    font-size: 16px;
-  }
-
-  .badge {
-    width: 34px;
-    height: 34px;
-    font-size: 14px;
-  }
-
-  .txt-row {
-    flex-direction: column;
-  }
-
-  .txt-row input,
-  .chk-btn {
-    width: 100%;
-  }
-
-  .txt-row input {
-    font-size: 16px; /* prevents iPhone zoom */
-  }
-
-  .tf-row {
-    flex-direction: column;
-  }
-
-  .score-big {
-    font-size: 48px;
-  }
-
-  .ice-big {
-    font-size: 70px;
-  }
-
-  .prize-title {
-    font-size: 18px;
-  }
-
-  .prize-desc {
-    font-size: 15px;
-  }
-
-  .result-bars {
-    flex-wrap: wrap;
-  }
-
-  .rbar {
-    width: 36px;
-    height: 36px;
-  }
+  body{padding:0.75rem;align-items:flex-start;}
+  .wrap{padding:1.25rem;border-radius:18px;margin-top:1rem;}
+  .header h1{font-size:22px;}
+  .header p{font-size:14px;}
+  .q-text{font-size:17px;}
+  .q-card{padding:1.25rem;}
+  .opt,.tf-btn,.chk-btn,.restart-btn,.nxt-btn{min-height:52px;font-size:16px;}
+  .badge{width:34px;height:34px;font-size:14px;}
+  .txt-row{flex-direction:column;}
+  .txt-row input,.chk-btn{width:100%;}
+  .txt-row input{font-size:16px;}
+  .tf-row{flex-direction:column;}
+  .score-big{font-size:48px;}
+  .ice-big{font-size:70px;}
+  .prize-title{font-size:18px;}
+  .prize-desc{font-size:15px;}
+  .result-bars{flex-wrap:wrap;}
+  .rbar{width:36px;height:36px;}
 }
-
-/* Remove hover effects on touch devices */
 @media (hover: none) {
-
-  .opt:hover,
-  .tf-btn:hover,
-  .chk-btn:hover,
-  .restart-btn:hover,
-  .nxt-btn:hover {
-    transform: none;
-    box-shadow: none;
-    background: inherit;
-    color: inherit;
-  }
-
-  .tf-t:hover {
-    border-color: #bae6fd;
-  }
-
-  .tf-f:hover {
-    border-color: #bae6fd;
-  }
+  .opt:hover,.tf-btn:hover,.chk-btn:hover,.restart-btn:hover,.nxt-btn:hover{transform:none;box-shadow:none;background:inherit;color:inherit;}
+  .tf-t:hover{border-color:#bae6fd;}
+  .tf-f:hover{border-color:#bae6fd;}
 }
 </style>
 </head>
@@ -194,8 +109,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <canvas id="confetti"></canvas>
 <div class="wrap">
   <div class="header">
-    <h1>🍦 თოლიას ქვიზი</h1>
-    <p>რამდენი იცი საყვარელი ნაყინის შესახებ?</p>
+    <h1>🕵️ საიდუმლო ნაყინი</h1>
+    <p>გამოიცანი, რომელი ნაყინის ბრენდია საუბარი!</p>
     <div class="streak" id="streak">🔥 <span id="streak-n">0</span> სწორი ზედიზედ!</div>
   </div>
   <div class="prog-row">
@@ -207,19 +122,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <script>
 var Q=[
-  {q:"1997 წლიდან საქართველოს ბაზარზე არსებული ნაყინის ბრენდი:",emoji:"🤔",tag:"გამოიცანი",type:"text",correct:"თოლია",alts:["tolia"],fact:"🎉 სწორია! თოლია 1997 წლიდან გვახარებს — 27 წელზე მეტია!"},
-  {q:"რამდენი სანაყინე ფილიალი აქვს თოლიას საქართველოში?",emoji:"🏪",tag:"გამოიცანი",type:"choice",options:["10","15","20","30","35"],answer:3,fact:"🏪 სწორია! 30 სანაყინე მთელ საქართველოში!"},
-  {q:"რამდენი სახეობის ნაყინს აწარმოებს თოლია?",emoji:"🍨",tag:"რამდენი",type:"choice",options:["19","26","37","41","58"],answer:1,fact:"🍨 სწორია! 26 სახეობა — ვანილი ყველაზე პოპულარულია!"},
-  {q:"სად დაიბადა პირველი თოლიას ნაყინი?",emoji:"🏙️",tag:"ისტორია",type:"choice",options:["ბათუმი 🌊","თბილისი 🏛️","გურჯაანი 🍇","ქუთაისი ⛰️"],answer:1,fact:"🏛️ სწორია! 1997 წელს სწორედ თბილისში გამოჩნდა პირველი თოლია."},
-  {q:"თოლიაში ყველაზე გაყიდვადი გემო ვანილია — სიმართლეა?",emoji:"🍦",tag:"სიმართლე / მცდარია",type:"tf",answer:true,fact:"✅ სიმართლეა! ვანილი ლიდერია გაყიდვებში — კლასიკა ყოველთვის იმარჯვებს! 🏆"}
+  {
+    q:"ეს ქართული ნაყინის ბრენდი 1997 წლიდან არსებობს — 27 წელზე მეტია! რა ჰქვია მას?",
+    emoji:"🤔",tag:"გამოიცანი",type:"text",
+    correct:"თოლია",alts:["tolia"],
+    fact:"🎉 სწორია! ეს ნაყინი 1997 წლიდან გვახარებს!",
+    failfact:"❌ არასწორია. მინიშნება: სახელი 5 ასოსგან შედგება."
+  },
+  {
+    q:"ამ ბრენდს საქართველოში 30 სანაყინე ფილიალი აქვს — სიმართლეა?",
+    emoji:"🏪",tag:"სიმართლე / მცდარია",type:"tf",answer:true,
+    fact:"🏪 სწორია! 30 სანაყინე მთელ საქართველოში!",
+    failfact:"❌ არასწორია. სიმართლეა — ამ ბრენდს მართლაც 30 ფილიალი აქვს!"
+  },
+  {
+    q:"ამ ქართულ ბრენდს 26 სახეობის ნაყინი აქვს. რომელი გემო ყველაზე პოპულარულია?",
+    emoji:"🍨",tag:"გამოიცანი",type:"choice",
+    options:["შოკოლადი 🍫","ვანილი 🍦","მარწყვი 🍓","ფისტა 🌿","ლიმონი 🍋"],
+    answer:1,
+    fact:"🍦 სწორია! ვანილი ლიდერია — კლასიკა ყოველთვის იმარჯვებს!",
+    failfact:"❌ არასწორია. სწორი გემო კლასიკური და ყველაზე საყვარელია."
+  },
+  {
+    q:"რომელ ქალაქში გაიხსნა ამ ბრენდის პირველი სანაყინე 1997 წელს?",
+    emoji:"🏙️",tag:"ისტორია",type:"choice",
+    options:["ბათუმი 🌊","თბილისი 🏛️","გურჯაანი 🍇","ქუთაისი ⛰️"],
+    answer:1,
+    fact:"🏛️ სწორია! 1997 წელს სწორედ დედაქალაქში გაიხსნა პირველი სანაყინე.",
+    failfact:"❌ არასწორია. მინიშნება: ქართული დედაქალაქი."
+  },
+  {
+    q:"ამ ბრენდის ნაყინი მხოლოდ ზაფხულში იყიდება — მცდარია?",
+    emoji:"🍦",tag:"სიმართლე / მცდარია",type:"tf",answer:false,
+    fact:"✅ სწორია! ეს ნაყინი მთელი წლის განმავლობაში იყიდება — ზამთარშიც! ❄️",
+    failfact:"❌ არასწორია. ეს ნაყინი წლის ნებისმიერ დროს ხელმისაწვდომია!"
+  }
 ];
 var cur=0,score=0,answered=false,streak=0,results=[];
 var L=["ა","ბ","გ","დ","ე"];
 
-window.addEventListener("resize", function () {
-  var cv = document.getElementById("confetti");
-  cv.width = window.innerWidth;
-  cv.height = window.innerHeight;
+window.addEventListener("resize",function(){
+  var cv=document.getElementById("confetti");
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
 });
 
 function render(){
@@ -254,7 +198,7 @@ function fb(correct,q){
   } else {
     streak=0;results.push(false);
     document.getElementById("streak").style.display="none";
-    el.innerHTML="❌ არასწორია. "+q.fact;el.className="feedback show bad";
+    el.innerHTML=q.failfact;el.className="feedback show bad";
   }
   answered=true;
   document.getElementById("nxt").className="nxt-btn show";
@@ -272,10 +216,13 @@ function checkT(){
 function checkC(idx){
   if(answered)return;
   var q=Q[cur];
+  // Only mark the chosen button — correct gets green, wrong gets red, others stay neutral
   for(var i=0;i<q.options.length;i++){
-    var b=document.getElementById("o"+i);b.disabled=true;
-    if(i===q.answer)b.className="opt correct";
-    else if(i===idx)b.className="opt wrong";
+    var b=document.getElementById("o"+i);
+    b.disabled=true;
+    if(i===idx){
+      b.className="opt "+(i===q.answer?"correct":"wrong");
+    }
   }
   fb(idx===q.answer,q);
 }
@@ -285,8 +232,12 @@ function checkTF(val){
   var q=Q[cur],ok=(val===q.answer);
   var t=document.getElementById("tft"),f=document.getElementById("tff");
   t.disabled=true;f.disabled=true;
-  if(val===true){t.className="tf-btn tf-t "+(ok?"correct":"wrong");if(!ok)f.className="tf-btn tf-f correct";}
-  else{f.className="tf-btn tf-f "+(ok?"correct":"wrong");if(!ok)t.className="tf-btn tf-t correct";}
+  // Only colour the button the user pressed
+  if(val===true){
+    t.className="tf-btn tf-t "+(ok?"correct":"wrong");
+  } else {
+    f.className="tf-btn tf-f "+(ok?"correct":"wrong");
+  }
   fb(ok,q);
 }
 
@@ -304,7 +255,7 @@ function showWin(){
   for(var i=0;i<results.length;i++)bars+='<div class="rbar '+(results[i]?"win":"lose")+'">'+(results[i]?"✅":"❌")+"</div>";
   if(won){
     h='<span class="ice-big">🍦</span>';
-    h+='<div class="win-title">🏆 გამარჯვებული!</div>';
+    h+='<div class="win-title">🏆 გამოიცანი! ეს თოლიაა!</div>';
     h+='<div class="score-big">'+score+"/5</div>";
     h+='<div class="score-of">სწორი პასუხი 5-დან</div>';
     h+='<div class="result-bars">'+bars+"</div>";
@@ -312,7 +263,7 @@ function showWin(){
     h+='<div class="prize-label">🎁 შენი ჯილდო</div>';
     h+='<span class="prize-ice">🍦</span>';
     h+='<div class="prize-title">უფასო ნაყინი!</div>';
-    h+='<div class="prize-desc">შენ მოიგე <strong>1 უფასო ვანილის ნაყინი</strong> </div>';
+    h+='<div class="prize-desc">შენ მოიგე <strong>1 უფასო ვანილის ნაყინი</strong> — <strong>თოლიასგან!</strong></div>';
     h+='<div class="prize-badge">✅ გამარჯვებული ხარ!</div></div>';
     setTimeout(confetti,300);
   } else {
