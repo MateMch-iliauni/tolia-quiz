@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>თოლიას კვიზი</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#dff0fb 0%,#f0f8ff 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.wrap{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(59,130,246,0.13);padding:2rem 2rem 1.5rem;max-width:540px;width:100%;}
+.header{text-align:center;margin-bottom:1.25rem;}
+.header h1{font-size:24px;font-weight:800;color:#1a1a1a;}
+.header p{font-size:13px;color:#999;margin-top:3px;}
+.streak{display:none;align-items:center;gap:6px;background:#e0f2fe;border:1.5px solid #7dd3fc;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;color:#0369a1;margin-top:8px;justify-content:center;}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;}
+.prog-bar{flex:1;height:8px;background:#e0f2fe;border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#38bdf8,#7dd3fc);transition:width 0.5s ease;}
+.prog-lbl{font-size:12px;font-weight:700;color:#0ea5e9;min-width:36px;text-align:right;}
+.q-card{background:#f0f8ff;border:1.5px solid #bae6fd;border-radius:16px;padding:1.5rem;margin-bottom:1rem;animation:slideIn 0.35s ease;}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.q-emoji{font-size:32px;margin-bottom:0.5rem;display:block;}
+.q-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#0ea5e9;background:#e0f2fe;border-radius:6px;padding:3px 8px;margin-bottom:0.6rem;}
+.q-text{font-size:18px;font-weight:700;color:#1a1a1a;line-height:1.45;}
+.options{display:flex;flex-direction:column;gap:9px;margin-top:1rem;}
+.opt{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #bae6fd;border-radius:12px;padding:13px 16px;font-size:15px;color:#1a1a1a;cursor:pointer;transition:all 0.18s;text-align:left;width:100%;font-weight:500;}
+.opt:hover:not(:disabled){background:#e0f2fe;border-color:#38bdf8;transform:translateX(3px);}
+.opt.correct{background:#e0f2fe;border-color:#0ea5e9;color:#0369a1;font-weight:700;animation:pop 0.3s ease;}
+.opt.wrong{background:#fdecea;border-color:#e24b4a;color:#8b1a1a;animation:shake 0.35s ease;}
+.opt:disabled{cursor:default;}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}}
+.badge{width:30px;height:30px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#0ea5e9;}
+.opt.correct .badge{background:#0ea5e9;color:#fff;}
+.opt.wrong .badge{background:#e24b4a;color:#fff;}
+.feedback{margin-top:0.9rem;padding:11px 15px;border-radius:12px;font-size:14px;display:none;line-height:1.5;font-weight:500;animation:fadeUp 0.25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.feedback.show{display:block;}
+.feedback.ok{background:#e0f2fe;color:#0369a1;border-left:4px solid #0ea5e9;}
+.feedback.bad{background:#fdecea;color:#8b1a1a;border-left:4px solid #e24b4a;}
+.txt-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem;}
+.txt-row input{flex:1;min-width:150px;padding:13px 15px;font-size:15px;border-radius:12px;border:2px solid #bae6fd;background:#fff;color:#1a1a1a;outline:none;font-weight:500;transition:border-color 0.18s;}
+.txt-row input:focus{border-color:#38bdf8;}
+.chk-btn{padding:13px 22px;font-size:14px;font-weight:700;border-radius:12px;border:none;background:#0ea5e9;color:#fff;cursor:pointer;}
+.chk-btn:hover{background:#0284c7;}
+.tf-row{display:flex;gap:12px;margin-top:1rem;}
+.tf-btn{flex:1;padding:16px;font-size:18px;font-weight:800;border-radius:14px;border:2px solid #bae6fd;background:#fff;cursor:pointer;transition:all 0.18s;}
+.tf-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 6px 18px rgba(14,165,233,0.15);}
+.tf-t:hover:not(:disabled){background:#e0f2fe;border-color:#38bdf8;}
+.tf-f:hover:not(:disabled){background:#fdecea;border-color:#e24b4a;}
+.tf-t.correct{background:#e0f2fe;border-color:#0ea5e9;animation:pop 0.3s;}
+.tf-f.correct{background:#e0f2fe;border-color:#0ea5e9;animation:pop 0.3s;}
+.tf-t.wrong{background:#fdecea;border-color:#e24b4a;animation:shake 0.35s;}
+.tf-f.wrong{background:#fdecea;border-color:#e24b4a;animation:shake 0.35s;}
+.tf-btn:disabled{cursor:default;}
+.nav-row{display:flex;justify-content:flex-end;margin-top:1.1rem;}
+.nxt-btn{padding:11px 26px;font-size:14px;font-weight:700;border-radius:12px;border:2px solid #0ea5e9;background:#fff;color:#0ea5e9;cursor:pointer;display:none;transition:all 0.18s;}
+.nxt-btn.show{display:block;}
+.nxt-btn:hover{background:#0ea5e9;color:#fff;}
+.win-screen{display:none;text-align:center;padding:0.5rem 0;animation:slideIn 0.5s ease;}
+.ice-big{font-size:90px;display:block;margin-bottom:0.75rem;animation:iceBounce 0.9s ease infinite alternate;}
+@keyframes iceBounce{from{transform:translateY(0) rotate(-5deg);}to{transform:translateY(-14px) rotate(5deg);}}
+.win-title{font-size:24px;font-weight:800;color:#1a1a1a;margin-bottom:0.25rem;}
+.score-big{font-size:58px;font-weight:800;color:#0ea5e9;line-height:1;margin:0.5rem 0 0.25rem;}
+.score-of{font-size:14px;color:#aaa;margin-bottom:1rem;}
+.result-bars{display:flex;justify-content:center;gap:8px;margin:0.75rem 0 1rem;}
+.rbar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.rbar.win{background:#e0f2fe;}
+.rbar.lose{background:#fdecea;}
+.prize-box{background:linear-gradient(135deg,#e0f2fe 0%,#f0f8ff 100%);border:2.5px solid #38bdf8;border-radius:18px;padding:1.5rem;margin:1rem 0;position:relative;overflow:hidden;}
+.prize-shine{position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(255,255,255,0.7) 0%,transparent 70%);border-radius:50%;}
+.prize-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#0ea5e9;margin-bottom:0.5rem;}
+.prize-ice{font-size:52px;display:block;margin:0.5rem 0;animation:iceBounce 1s ease infinite alternate;}
+.prize-title{font-size:20px;font-weight:800;color:#1a1a1a;margin-bottom:0.25rem;}
+.prize-desc{font-size:14px;color:#555;line-height:1.6;}
+.prize-badge{display:inline-block;background:#0ea5e9;color:#fff;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;margin-top:0.75rem;}
+.tryagain-box{background:#f0f8ff;border:1.5px solid #bae6fd;border-radius:16px;padding:1.25rem;margin:1rem 0;}
+.tryagain-box p{font-size:15px;color:#444;line-height:1.7;}
+.restart-btn{margin-top:0.75rem;padding:14px 32px;font-size:15px;font-weight:700;border-radius:14px;border:none;background:linear-gradient(90deg,#38bdf8,#7dd3fc);color:#fff;cursor:pointer;transition:opacity 0.18s;}
+.restart-btn:hover{opacity:0.88;}
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
+/* Mobile optimization */
+@media (max-width: 768px) {
+
+  body {
+    padding: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .wrap {
+    padding: 1.25rem;
+    border-radius: 18px;
+    margin-top: 1rem;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+
+  .q-text {
+    font-size: 17px;
+  }
+
+  .q-card {
+    padding: 1.25rem;
+  }
+
+  .opt,
+  .tf-btn,
+  .chk-btn,
+  .restart-btn,
+  .nxt-btn {
+    min-height: 52px;
+    font-size: 16px;
+  }
+
+  .badge {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .txt-row {
+    flex-direction: column;
+  }
+
+  .txt-row input,
+  .chk-btn {
+    width: 100%;
+  }
+
+  .txt-row input {
+    font-size: 16px; /* prevents iPhone zoom */
+  }
+
+  .tf-row {
+    flex-direction: column;
+  }
+
+  .score-big {
+    font-size: 48px;
+  }
+
+  .ice-big {
+    font-size: 70px;
+  }
+
+  .prize-title {
+    font-size: 18px;
+  }
+
+  .prize-desc {
+    font-size: 15px;
+  }
+
+  .result-bars {
+    flex-wrap: wrap;
+  }
+
+  .rbar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) {
+
+  .opt:hover,
+  .tf-btn:hover,
+  .chk-btn:hover,
+  .restart-btn:hover,
+  .nxt-btn:hover {
+    transform: none;
+    box-shadow: none;
+    background: inherit;
+    color: inherit;
+  }
+
+  .tf-t:hover {
+    border-color: #bae6fd;
+  }
+
+  .tf-f:hover {
+    border-color: #bae6fd;
+  }
+}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+  <div class="header">
+    <h1>🍦 თოლიას კვიზი</h1>
+    <p>რამდენი იცი საყვარელი ნაყინის შესახებ?</p>
+    <div class="streak" id="streak">🔥 <span id="streak-n">0</span> სწორი ზედიზედ!</div>
+  </div>
+  <div class="prog-row">
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <div class="prog-lbl" id="prog-lbl">0/5</div>
+  </div>
+  <div id="quiz"></div>
+  <div class="win-screen" id="win"></div>
+</div>
+<script>
+var Q=[
+  {q:"1997 წლიდან საქართველოს ბაზარზე არსებული ნაყინის ბრენდი:",emoji:"🤔",tag:"გამოიცანი",type:"text",correct:"თოლია",alts:["tolia"],fact:"🎉 სწორია! თოლია 1997 წლიდან გვახარებს — 27 წელზე მეტია!"},
+  {q:"რამდენი სანაყინე ფილიალი აქვს თოლიას საქართველოში?",emoji:"🏪",tag:"გამოიცანი",type:"choice",options:["10","15","20","30","35"],answer:3,fact:"🏪 სწორია! 30 სანაყინე მთელ საქართველოში!"},
+  {q:"რამდენი სახეობის ნაყინს აწარმოებს თოლია?",emoji:"🍨",tag:"რამდენი",type:"choice",options:["19","26","37","41","58"],answer:1,fact:"🍨 სწორია! 26 სახეობა — ვანილი ყველაზე პოპულარულია!"},
+  {q:"სად დაიბადა პირველი თოლიას ნაყინი?",emoji:"🏙️",tag:"ისტორია",type:"choice",options:["ბათუმი 🌊","თბილისი 🏛️","გურჯაანი 🍇","ქუთაისი ⛰️"],answer:1,fact:"🏛️ სწორია! 1997 წელს სწორედ თბილისში გამოჩნდა პირველი თოლია."},
+  {q:"თოლიაში ყველაზე გაყიდვადი გემო ვანილია — სიმართლეა?",emoji:"🍦",tag:"სიმართლე / მცდარია",type:"tf",answer:true,fact:"✅ სიმართლეა! ვანილი ლიდერია გაყიდვებში — კლასიკა ყოველთვის იმარჯვებს! 🏆"}
+];
+var cur=0,score=0,answered=false,streak=0,results=[];
+var L=["ა","ბ","გ","დ","ე"];
+
+window.addEventListener("resize", function () {
+  var cv = document.getElementById("confetti");
+  cv.width = window.innerWidth;
+  cv.height = window.innerHeight;
+});
+
+function render(){
+  document.getElementById("prog").style.width=(cur/Q.length*100)+"%";
+  document.getElementById("prog-lbl").textContent=cur+"/"+Q.length;
+  var q=Q[cur],h='<div class="q-card"><span class="q-emoji">'+q.emoji+'</span><span class="q-tag">'+q.tag+'</span><div class="q-text">'+q.q+"</div>";
+  if(q.type==="text"){
+    h+='<div class="txt-row"><input id="txt" type="text" placeholder="ჩაწერეთ სახელი..."/><button class="chk-btn" onclick="checkT()">შემოწმება ✓</button></div>';
+  } else if(q.type==="choice"){
+    h+='<div class="options">';
+    for(var i=0;i<q.options.length;i++) h+='<button class="opt" onclick="checkC('+i+')" id="o'+i+'"><span class="badge">'+L[i]+"</span>"+q.options[i]+"</button>";
+    h+="</div>";
+  } else {
+    h+='<div class="tf-row"><button class="tf-btn tf-t" onclick="checkTF(true)" id="tft">✅ სიმართლე</button><button class="tf-btn tf-f" onclick="checkTF(false)" id="tff">❌ მცდარია</button></div>';
+  }
+  var last=(cur===Q.length-1);
+  h+='<div class="feedback" id="fb"></div></div><div class="nav-row"><button class="nxt-btn" id="nxt" onclick="goNext()">'+(last?"შედეგები 🎯":"შემდეგი →")+"</button></div>";
+  document.getElementById("quiz").innerHTML=h;
+  answered=false;
+  if(q.type==="text"){
+    document.getElementById("txt").addEventListener("keydown",function(e){if(e.key==="Enter")checkT();});
+    setTimeout(function(){var el=document.getElementById("txt");if(el)el.focus();},80);
+  }
+}
+
+function fb(correct,q){
+  var el=document.getElementById("fb");
+  if(correct){
+    streak++;score++;results.push(true);
+    el.innerHTML=q.fact;el.className="feedback show ok";
+    if(streak>=2){document.getElementById("streak").style.display="inline-flex";document.getElementById("streak-n").textContent=streak;}
+  } else {
+    streak=0;results.push(false);
+    document.getElementById("streak").style.display="none";
+    el.innerHTML="❌ არასწორია. "+q.fact;el.className="feedback show bad";
+  }
+  answered=true;
+  document.getElementById("nxt").className="nxt-btn show";
+}
+
+function checkT(){
+  if(answered)return;
+  var v=document.getElementById("txt").value.trim().toLowerCase(),q=Q[cur];
+  var ok=v===q.correct.toLowerCase();
+  if(!ok)for(var i=0;i<q.alts.length;i++)if(v===q.alts[i].toLowerCase()){ok=true;break;}
+  document.getElementById("txt").disabled=true;
+  fb(ok,q);
+}
+
+function checkC(idx){
+  if(answered)return;
+  var q=Q[cur];
+  for(var i=0;i<q.options.length;i++){
+    var b=document.getElementById("o"+i);b.disabled=true;
+    if(i===q.answer)b.className="opt correct";
+    else if(i===idx)b.className="opt wrong";
+  }
+  fb(idx===q.answer,q);
+}
+
+function checkTF(val){
+  if(answered)return;
+  var q=Q[cur],ok=(val===q.answer);
+  var t=document.getElementById("tft"),f=document.getElementById("tff");
+  t.disabled=true;f.disabled=true;
+  if(val===true){t.className="tf-btn tf-t "+(ok?"correct":"wrong");if(!ok)f.className="tf-btn tf-f correct";}
+  else{f.className="tf-btn tf-f "+(ok?"correct":"wrong");if(!ok)t.className="tf-btn tf-t correct";}
+  fb(ok,q);
+}
+
+function goNext(){
+  cur++;
+  if(cur>=Q.length)showWin();
+  else render();
+}
+
+function showWin(){
+  document.getElementById("quiz").style.display="none";
+  document.getElementById("prog").style.width="100%";
+  document.getElementById("prog-lbl").textContent="5/5";
+  var won=(score>=4),bars="",h="";
+  for(var i=0;i<results.length;i++)bars+='<div class="rbar '+(results[i]?"win":"lose")+'">'+(results[i]?"✅":"❌")+"</div>";
+  if(won){
+    h='<span class="ice-big">🍦</span>';
+    h+='<div class="win-title">🏆 გამარჯვებული!</div>';
+    h+='<div class="score-big">'+score+"/5</div>";
+    h+='<div class="score-of">სწორი პასუხი 5-დან</div>';
+    h+='<div class="result-bars">'+bars+"</div>";
+    h+='<div class="prize-box"><div class="prize-shine"></div>';
+    h+='<div class="prize-label">🎁 შენი ჯილდო</div>';
+    h+='<span class="prize-ice">🍦</span>';
+    h+='<div class="prize-title">უფასო ნაყინი!</div>';
+    h+='<div class="prize-desc">შენ მოიგე <strong>1 უფასო ვანილის ნაყინი</strong> </div>';
+    h+='<div class="prize-badge">✅ გამარჯვებული ხარ!</div></div>';
+    setTimeout(confetti,300);
+  } else {
+    var icons=["😅","🤔","👍","⭐"];
+    var msgs=[
+      "ისევ სცადე — ნაყინი გელოდება! 🍦 გაიმეორე და 4/5 მოიპოვე!",
+      "კარგი მცდელობა! 💪 კიდევ სცადე და 4/5 მოიპოვე — ნაყინი გელოდება!",
+      "ნახევარი — კარგია! 🙌 ისევ სცადე და გამარჯვება ახლოსაა!",
+      "თითქმის! ⭐ კიდევ ერთი მცდელობა და ნაყინი შენია!"
+    ];
+    h='<span style="font-size:72px;display:block;margin-bottom:0.75rem;">'+icons[Math.min(score,3)]+"</span>";
+    h+='<div class="win-title">კვიზი დასრულდა!</div>';
+    h+='<div class="score-big">'+score+"/5</div>";
+    h+='<div class="score-of">სწორი პასუხი 5-დან</div>';
+    h+='<div class="result-bars">'+bars+"</div>";
+    h+='<div class="tryagain-box"><p>'+msgs[Math.min(score,3)]+"</p></div>";
+  }
+  h+='<button class="restart-btn" onclick="restart()">↺ ხელახლა თამაში</button>';
+  document.getElementById("win").innerHTML=h;
+  document.getElementById("win").style.display="block";
+}
+
+function restart(){
+  cur=0;score=0;streak=0;answered=false;results=[];
+  document.getElementById("quiz").style.display="block";
+  document.getElementById("win").style.display="none";
+  document.getElementById("streak").style.display="none";
+  render();
+}
+
+function confetti(){
+  var cv=document.getElementById("confetti"),ctx=cv.getContext("2d");
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  var cols=["#38bdf8","#7dd3fc","#bae6fd","#FFD700","#FF6B6B","#a78bfa"],ps=[];
+  for(var i=0;i<160;i++)ps.push({x:Math.random()*cv.width,y:Math.random()*-300,w:7+Math.random()*9,h:4+Math.random()*5,c:cols[Math.floor(Math.random()*cols.length)],s:2+Math.random()*4,a:Math.random()*360,sp:(Math.random()-0.5)*8});
+  var fr=0;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(var i=0;i<ps.length;i++){var p=ps[i];ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a*Math.PI/180);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.y+=p.s;p.a+=p.sp;p.x+=Math.sin(p.a*0.05)*1.5;}
+    fr++;if(fr<240)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  draw();
+}
+render();
+</script>
+</body>
+</html>
